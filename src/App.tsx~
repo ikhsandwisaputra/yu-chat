@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import socket from "./socket";
-import { Demo } from "./components/Demo";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -23,7 +22,6 @@ function App() {
 
   return (
     <div className="p-4">
-      <Demo></Demo>
       <div className="space-y-2">
         {chat.map((msg, i) => (
           <div key={i} className="bg-blue-100 p-2 rounded">{msg}</div>
