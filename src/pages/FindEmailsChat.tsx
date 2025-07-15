@@ -1,12 +1,18 @@
 // src/components/FindEmailsChat.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, MessageCircleHeart, UserPlus } from 'lucide-react';
-import { collection, query, where, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs,  doc, addDoc,
+  serverTimestamp,
+  and,
+  or, 
+  getDoc, limit, onSnapshot} from 'firebase/firestore';
 import { db } from '../firebase';
 import { FaRegSadCry } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { type RootState } from '@/redux/store';
+import { NavLink } from 'react-router-dom';
+// 1. Tambahkan import yang dibutuhkan
 
 interface UserResult {
   uid: string;
@@ -21,7 +27,29 @@ const FindEmailsChat = () => {
   const [results, setResults] = useState<UserResult[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const currentUser = useSelector((state: RootState) => state.user.selectedUser);
+ // 2. Tambahkan state baru untuk melacak permintaan pertemanan
+    const [hasPendingRequests, setHasPendingRequests] = useState(false);
+const [justSentRequest, setJustSentRequest] = useState(false);
+     // 3. Tambahkan useEffect untuk mengecek permintaan secara real-time
+    useEffect(() => {
+        if (!currentUser?.login) return;
 
+        const requestsRef = collection(db, 'friendRequests');
+        const q = query(
+            requestsRef,
+            where('to', '==', currentUser.uid),
+            where('status', '==', 'pending'),
+            limit(1)
+        );
+
+        // onSnapshot akan memantau perubahan secara langsung
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            setHasPendingRequests(!querySnapshot.empty);
+        });
+
+        // Membersihkan listener saat komponen tidak lagi digunakan
+        return () => unsubscribe();
+    }, [currentUser?.uid, currentUser?.login]);
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
     if (!currentUser) {
@@ -49,45 +77,79 @@ const FindEmailsChat = () => {
     }
   };
 
-  const handleAddFriend = async (friendUID: string) => {
-    if (!currentUser?.login) {
-      toast.error("Silakan login terlebih dahulu.");
+const handleSendFriendRequest = async (friendUID: string) => {
+  if (!currentUser?.login) {
+    toast.error("Silakan login terlebih dahulu.");
+    return;
+  }
+
+  try {
+    // 1. Cek apakah sudah berteman
+    const userRef = doc(db, 'users', currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    const currentFriends = userSnap.data()?.friends || [];
+    if (currentFriends.includes(friendUID)) {
+      toast.warning('Kalian sudah berteman!');
       return;
     }
 
-    try {
-      const userRef = doc(db, 'users', currentUser.uid);
-      const userSnap = await getDoc(userRef);
-      const currentData = userSnap.data();
-      const currentFriends: string[] = currentData?.friends || [];
+    // 2. Cek apakah sudah ada permintaan terkirim (baik dari A ke B atau B ke A)
+    const requestsRef = collection(db, 'friendRequests');
+    const q = query(requestsRef,
+      or(
+        and(where('from', '==', currentUser.uid), where('to', '==', friendUID)),
+        and(where('from', '==', friendUID), where('to', '==', currentUser.uid))
+      )
+    );
 
-      if (currentFriends.includes(friendUID)) {
-        toast.warning('Sudah jadi teman!');
-        return;
-      }
-
-      await updateDoc(userRef, {
-        friends: [...currentFriends, friendUID],
-      });
-
-      toast.success('Teman berhasil ditambahkan!');
-    } catch (error) {
-      toast.error("Gagal menambahkan teman.");
-      console.error(error);
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      toast.info('Permintaan pertemanan sudah dikirim atau diterima!');
+      
+      return;
     }
-  };
+
+    // 3. Jika belum ada, kirim permintaan baru
+    await addDoc(collection(db, "friendRequests"), {
+      from: currentUser.uid,
+      to: friendUID,
+      status: 'pending',
+      createdAt: serverTimestamp() // Gunakan serverTimestamp untuk konsistensi
+    });
+
+    toast.success('Permintaan pertemanan berhasil dikirim!');
+ setJustSentRequest(true);
+  } catch (error) {
+    toast.error("Gagal mengirim permintaan pertemanan.");
+    console.error(error);
+  }
+};
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#d6d4e1] p-4 font-sans">
-       
-      <h1>{currentUser?.uid}</h1>
-      <h1>{currentUser?.name}</h1>
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br to-[#9b51fc] shadow-lg">
         <MessageCircleHeart className="h-8 w-8 text-white" />
       </div>
 
       <h1 className="mb-6 text-xl font-semibold text-slate-700">Temukan Email Temanmu</h1>
+{/* 4. Tambahkan NavLink yang tampil secara kondisional */}
+                {/* 4. Ubah kondisi untuk menampilkan NavLink */}
+                {(hasPendingRequests || justSentRequest) && (
+                    <div className="mb-6 p-4 bg-indigo-500/20 border border-indigo-500 rounded-lg text-center">
+                        <NavLink 
+                            to="/friend-requests" 
+                            className="font-bold text-indigo-300 hover:text-white transition-colors"
+                        >
+                            {/* Tampilkan pesan yang berbeda tergantung kondisi */}
+                            {hasPendingRequests 
+                                ? "🔔 Anda punya permintaan pertemanan baru! Klik untuk melihat."
+                                : "✅ Permintaan terkirim! Klik di sini untuk melihat status permintaanmu."
+                            }
+                        </NavLink>
+                    </div>
+                )}
 
+                
       <div className="w-full max-w-md rounded-2xl bg-white/70 p-2 shadow-2xl backdrop-blur-md">
         <div className="relative mt-4">
           <input
@@ -132,12 +194,12 @@ const FindEmailsChat = () => {
                   <p className="text-sm text-slate-500">{user.email}</p>
                 </div>
               </div>
-              <button
-                onClick={() => handleAddFriend(user.uid)}
-                className="rounded-full bg-[#12e2a4] p-2 text-white hover:bg-slate-900"
-              >
-                <UserPlus size={18} />
-              </button>
+             <button
+            onClick={() => handleSendFriendRequest(user.uid)} // Ganti di sini
+            className="rounded-full bg-[#12e2a4] p-2 text-white hover:bg-slate-900"
+          >
+            <UserPlus size={18} />
+          </button>
             </li>
           ))}
         </ul>

@@ -9,7 +9,7 @@ import type { RootState } from '@/redux/store';
 import { setSelectedFriend } from '@/redux/slices/userSlice';
 import Loaders from './Loaders';
 import socket from '@/socket';
-
+import { NavLink} from 'react-router-dom';
 interface Users {
   uid: string;
   email: string;
@@ -26,6 +26,7 @@ const DaftarEmailChat = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+
 useEffect(() => {
     // Mendengarkan update daftar pengguna online dari server
     const handleUpdateOnlineUsers = (users: string[]) => {
@@ -107,34 +108,43 @@ useEffect(() => {
         {loading ? (
           <Loaders />
         ) : (
-          friends.map((friend) => {
-            const isOnline = onlineUsers.includes(friend.uid);
-            return (
-              <div
-                key={friend.uid}
-                className={`flex cursor-pointer items-center p-4 hover:bg-gray-100 ${selectedFriend?.uid === friend.uid ? 'bg-gray-200' : ''}`}
-                onClick={() => handleSelectFriend(friend)}
-              >
-                {friend.photoURL ? (
-                  <img src={friend.photoURL} alt={friend.name} className="h-10 w-10 rounded-full object-cover" referrerPolicy="no-referrer" />
-                ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 text-gray-600">
-                    {friend.name.charAt(0)}
+          friends.length > 0 ? (
+            friends.map((friend) => {
+              const isOnline = onlineUsers.includes(friend.uid);
+              return (
+                <div
+                  key={friend.uid}
+                  className={`flex cursor-pointer items-center p-4 hover:bg-gray-100 ${selectedFriend?.uid === friend.uid ? 'bg-gray-200' : ''}`}
+                  onClick={() => handleSelectFriend(friend)}
+                >
+                  {friend.photoURL ? (
+                    <img src={friend.photoURL} alt={friend.name} className="h-10 w-10 rounded-full object-cover" referrerPolicy="no-referrer" />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 text-gray-600">
+                      {friend.name.charAt(0)}
+                    </div>
+                  )}
+                  <div className="ml-4 flex-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold">{friend.name}</h3>
+                      <p className={`truncate text-sm ${isOnline ? 'text-green-600' : 'text-gray-500'}`}>
+                        {isOnline ? 'Online' : 'Offline'}
+                      </p>
+                      <span className="text-xs text-gray-500">10:30 AM</span>
+                    </div>
+                    <p className="truncate text-sm text-gray-500">Pesan terakhir...</p>
                   </div>
-                )}
-                <div className="ml-4 flex-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">{friend.name}</h3>
-                    <p className={`truncate text-sm ${isOnline ? 'text-green-600' : 'text-gray-500'}`}>
-                      {isOnline ? 'Online' : 'Offline'}
-                    </p>
-                    <span className="text-xs text-gray-500">10:30 AM</span>
-                  </div>
-                  <p className="truncate text-sm text-gray-500">Pesan terakhir...</p>
                 </div>
-              </div>
-            );
-          })
+              );
+            })
+          ) : (
+            <div className="flex items-center justify-center p-4">
+                <NavLink to={'/find-emails-chat'} className="group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-rose-300 hover:before:[box-shadow:_20px_20px_20px_30px_#a21caf] duration-500 before:duration-500 hover:duration-500 underline underline-offset-2 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur hover:underline hover:underline-offset-4 origin-left hover:decoration-2 hover:text-rose-300 relative bg-neutral-800 h-16 w-64 border text-left p-3 text-gray-50 text-base font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-violet-500 before:rounded-full before:blur-lg after:absolute after:z-10 after:w-20 after:h-20 after:content[''] after:bg-rose-300 after:right-8 after:top-3 after:rounded-full after:blur-lg">
+     Find Friends ..
+    </NavLink>
+             
+            </div>
+          )
         )}
       </div>
     </div>

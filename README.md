@@ -1,69 +1,29 @@
-# React + TypeScript + Vite
+ jadi aku akan coba login sebagai 2 user dengan 2 browser berbeda, saat aku login sebagai si b yang belum add siapapun tapi si a sebelumnya add si b lewat page find friend lists, apakah pesan ku masuk ke si b ??
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ Sisi Pengirim (Si A): Kamu (Si A) sudah menambahkan Si B. Jadi, UID Si B ada di daftar temanmu. Kamu bisa melihat profilnya, memilihnya, dan mengirim pesan. Aplikasi akan mengirim pesan ke room yang benar (room-UID_A-UID_B).
 
-Currently, two official plugins are available:
+Sisi Penerima (Si B): Karena Si B belum menambahkanmu, UID-mu (Si A) tidak ada di daftar temannya. Akibatnya:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Di halaman DaftarEmailChat atau EmailFriendLists, profilmu tidak akan muncul.
 
-## Expanding the ESLint configuration
+Si B tidak punya cara untuk mengklik namamu dan membuka halaman chat denganmu.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Karena dia tidak pernah membuka halaman chat denganmu, aplikasinya tidak pernah menjalankan perintah socket.emit('join_room', 'room-UID_A-UID_B').
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Kesimpulan: Pesanmu terkirim dari klien A ke server, menunggu di room itu. Tapi karena klien B tidak pernah masuk ke room yang sama, pesan itu tidak akan pernah sampai ke layarnya. Pesanmu "tersesat di jalan".
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+kerjakan ini :
+Solusi Terbaik: Sistem Pertemanan Mutual (Friend Request)
+Cara paling umum dan benar untuk mengatasi ini adalah dengan sistem "Permintaan Pertemanan".
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+A Mengirim Permintaan: Ketika A menambahkan B, jangan langsung simpan UID B di daftar teman A. Sebaliknya, buat koleksi baru di Firestore, misalnya friendRequests, dengan dokumen { from: 'UID_A', to: 'UID_B', status: 'pending' }.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+B Menerima Notifikasi: Si B akan punya notifikasi atau tab "Permintaan Pertemanan" yang menampilkan permintaan dari A.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+B Menerima/Menolak:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Jika B menerima, barulah kamu melakukan update: tambahkan UID B ke friends A, dan tambahkan UID A ke friends B. Hapus dokumen permintaan tadi.
+
+Jika B menolak, cukup hapus dokumen permintaan.
+
+Dengan cara ini, obrolan hanya bisa terjadi jika kedua belah pihak sudah setuju berteman, memastikan tidak ada pesan yang "tersesat".

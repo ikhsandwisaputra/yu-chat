@@ -33,6 +33,20 @@ const userSlice = createSlice({
     },
     logout: (state) => {
       state.selectedUser = null;
+      state.selectedUser = {
+        uid: '',
+        email: '',
+        name: '',
+        photoURL: '',
+        login: false,
+        friends: []
+      };
+      state.selectedUser.name = '';
+      state.selectedUser.email = '';
+      state.selectedUser.photoURL = '';
+      state.selectedUser.login = false;
+      state.selectedUser.friends = [];
+
     },// Tambahkan ini di reducers
 setSelectedFriend: (state, action) => {
   state.selectedFriend = action.payload;

@@ -13,6 +13,7 @@ import NotFoundPage from './pages/NotFoundPage.tsx'
 import FindEmailsChat from './pages/FindEmailsChat.tsx'
 import ChatPage from './pages/ChatPage.tsx'
 import EmailFriendLists from './pages/EmailFriendLists.tsx';
+import FriendRequests from './pages/FriendRequests.tsx';
 
 createRoot(document.getElementById('root')!).render(
  <StrictMode>
@@ -27,6 +28,14 @@ createRoot(document.getElementById('root')!).render(
       <Route path='/yu-chat' element={<ChatPage />}></Route>      
       <Route path='/yu-chat/my-list-friends' element={<EmailFriendLists />}></Route>      
       <Route path='*' element={<NotFoundPage />}></Route>      
+      <Route
+        path='/friend-requests'
+        element={
+          
+            <FriendRequests />
+          
+        }
+      />
       </Routes>      
       <ToastContainer />
       </BrowserRouter>
