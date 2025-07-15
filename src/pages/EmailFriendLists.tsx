@@ -1,4 +1,4 @@
-// src/components/PeopleDashboard.tsx
+// src/pages/EmailFriendLists.tsx
 
 import React, { useEffect, useState } from 'react';
 import { Search, ChevronDown, MoreHorizontal, LayoutGrid, List } from 'lucide-react';
@@ -11,6 +11,7 @@ import Loaders from '@/components/Loaders';
 // Tipe data untuk setiap orang
 import { useDispatch } from "react-redux";
 import { setSelectedFriend, clearSelectedFriend } from "@/redux/slices/userSlice";
+import { useNavigate } from 'react-router-dom';
 
 
 interface Users {
@@ -58,11 +59,13 @@ const EmailFriendLists = () => {
     const [peopleData, setPeopleData] = useState<Users[]>([]);
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const handleSelectUser = (userId: string) => {
   const selected = peopleData.find((u) => u.uid === userId);
   try {
       if (selected) {
         dispatch(setSelectedFriend(selected));        
+        navigate('/yu-chat');
       }
       console.log(selected);
     

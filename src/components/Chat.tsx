@@ -1,68 +1,174 @@
 // src/components/Chat.tsx
-import { ArrowLeft, Paperclip, Send } from 'lucide-react';
-import type { User, Message } from '../data/dummyData';
-import { type RootState } from '@/redux/store';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Maximize2, Phone, Video, Info, Image, Smile, Send, ArrowLeft } from 'lucide-react';
 import { useSelector } from 'react-redux';
-interface ChatProps {
-  user: User | undefined;
-  messages: Message[];
-  onToggleProfile: () => void;
-  onBack: () => void;
+import type { RootState } from '@/redux/store';
+import socket from '../socket';
+import { useDispatch } from 'react-redux';
+import { clearSelectedFriend } from '@/redux/slices/userSlice';
+import { useNavigate } from 'react-router-dom';
+
+interface Friend {
+  uid: string;
+  name: string;
+  email: string;
+  photoURL: string;
 }
 
-const Chat = ({ user, messages, onToggleProfile, onBack }: ChatProps) => {
+interface Message {
+  senderId: string;
+  receiverId: string;
+  message: string;
+  timestamp: number;
+}
+
+interface ChatProps {
+  friend: Friend;
+  onToggleProfile: () => void;
+}
+
+const Chat = ({ friend, onToggleProfile }: ChatProps) => {
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
   const currentUser = useSelector((state: RootState) => state.user.selectedUser);
-  if (!user) {
-    return (
-      <div className="hidden flex-1 items-center justify-center text-gray-400 lg:flex">
-        Select a chat to start messaging
-      </div>
-    );
-  }
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+const [isFriendOnline, setIsFriendOnline] = useState(false); 
+  const room = [currentUser?.uid, friend.uid].sort().join('-');
+useEffect(() => {
+    // Mendengarkan update daftar pengguna online
+    const handleUpdateOnlineUsers = (onlineUsers: string[]) => {
+      // Cek apakah UID teman kita ada di dalam daftar online
+      setIsFriendOnline(onlineUsers.includes(friend.uid));
+    };
+    
+    socket.on('update_online_users', handleUpdateOnlineUsers);
+    
+    // Minta status online saat pertama kali komponen dimuat
+    // (Server akan merespons dengan event 'update_online_users')
+    // Ini opsional, karena server akan mengirim update saat ada perubahan.
+    // Namun, ini memastikan status langsung benar saat chat dibuka.
+    socket.emit('request_initial_status');
+
+
+    // Membersihkan listener saat komponen unmount atau teman berubah
+    return () => {
+      socket.off('update_online_users', handleUpdateOnlineUsers);
+    };
+  }, [friend.uid]);
+  useEffect(() => {
+    // Pastikan socket terhubung
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    // Bergabung ke room saat komponen dimuat
+    socket.emit('join_room', room);
+
+    // Menerima pesan baru
+    const handleNewMessage = (newMessage: Message) => {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    };
+    
+    socket.on('receive_message', handleNewMessage);
+
+    // Membersihkan listener saat komponen di-unmount
+    return () => {
+      socket.off('receive_message', handleNewMessage);
+      socket.emit('leave_room', room);
+    };
+  }, [room]);
+
+  useEffect(() => {
+    // Scroll ke bawah saat ada pesan baru
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = () => {
+    if (message.trim() && currentUser) {
+      const newMessage: Message = {
+        senderId: currentUser.uid,
+        receiverId: friend.uid,
+        message,
+        timestamp: Date.now(),
+      };
+
+      socket.emit('send_message', { room, message: newMessage });
+      setMessages([...messages, newMessage]);
+      setMessage('');
+    }
+  };
+
+  const handleBack = () => {
+    dispatch(clearSelectedFriend());
+    navigate('/yu-chat');
+  };
 
   return (
-    <div className="flex flex-1 flex-col bg-gray-50">
-      <div className="flex h-16 shrink-0 items-center justify-between border-b bg-white px-6">
-        <div className="flex items-center">
-            <button onClick={onBack} className="mr-4 lg:hidden">
-              <ArrowLeft className="h-6 w-6 text-gray-600" />
-            </button>
-            <img
-                src={currentUser?.photoURL} 
-                alt={currentUser?.name}
-                className="h-10 w-10 cursor-pointer rounded-full"
-                onClick={onToggleProfile}
-                referrerPolicy="no-referrer"
-            />
-            <div className="ml-3">
-              <p className="font-semibold text-gray-800">{currentUser?.name}</p>
-              {user.online && <p className="text-xs text-green-500">Online</p>}
+    <div className="flex h-screen flex-col bg-white shadow-lg">
+      {/* Header Chat */}
+      <div className="flex items-center justify-between border-b p-4">
+        <div onClick={onToggleProfile} className="flex items-center cursor-pointer">
+         <button onClick={(e) => { e.stopPropagation(); handleBack(); }} className="mr-4 lg:hidden">
+            <ArrowLeft className="h-6 w-6 text-gray-600" />
+          </button>
+          {friend.photoURL ? (
+            <img src={friend.photoURL} alt={friend.name} className="h-10 w-10 rounded-full object-cover" referrerPolicy="no-referrer" />
+          ) : (
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-400">
+              {friend.name.charAt(0)}
             </div>
-        </div>
-      </div>
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="space-y-6">
-          {messages.map(msg => (
-            <div key={msg.id} className={`flex items-end gap-3 ${msg.sender === 'me' ? 'flex-row-reverse' : ''}`}>
-                <img src={msg.sender === 'me' ? 'https://i.pravatar.cc/150?u=me' : user.avatar} alt="sender" className="h-8 w-8 rounded-full" />
-                <div className={`max-w-xs rounded-xl p-4 md:max-w-md ${msg.sender === 'me' ? 'rounded-br-none bg-blue-500 text-white' : 'rounded-bl-none bg-white text-gray-800'}`}>
-                    <p>{msg.text}</p>
-                    <p className={`mt-2 text-xs ${msg.sender === 'me' ? 'text-blue-200' : 'text-gray-400'}`}>{msg.timestamp}</p>
-                </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="border-t bg-white p-4">
-        <div className="relative">
-          <input type="text" placeholder="Write a message..." className="w-full rounded-lg border bg-gray-100 py-3 pl-4 pr-24 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-3">
-            <button className="text-gray-400 hover:text-gray-600"><Paperclip /></button>
-            <button className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600"><Send /></button>
+          )}
+          <div className="ml-4">
+            <h2 className="text-lg font-semibold">{friend.name}</h2>
+             <p className={`text-sm ${isFriendOnline ? 'text-green-600' : 'text-gray-500'}`}>
+              {isFriendOnline ? 'Online' : 'Offline'}
+            </p>
           </div>
+        </div>
+        <div className="flex items-center space-x-4">
+          <button className="text-gray-600 hover:text-blue-500"><Maximize2 className="h-5 w-5" /></button>
+          <button className="text-gray-600 hover:text-blue-500"><Phone className="h-5 w-5" /></button>
+          <button className="text-gray-600 hover:text-blue-500"><Video className="h-5 w-5" /></button>
+          <button onClick={onToggleProfile} className="text-gray-600 hover:text-blue-500"><Info className="h-5 w-5" /></button>
+        </div>
+      </div>
+
+      {/* Area Pesan */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((msg, index) => (
+          <div key={index} className={`flex ${msg.senderId === currentUser?.uid ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg p-3 ${msg.senderId === currentUser?.uid ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              <p>{msg.message}</p>
+              <span className="text-xs opacity-75">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Pesan */}
+      <div className="border-t p-4">
+        <div className="flex items-center">
+          <button className="text-gray-500 hover:text-blue-500 mr-3"><Image className="h-6 w-6" /></button>
+          <button className="text-gray-500 hover:text-blue-500 mr-3"><Smile className="h-6 w-6" /></button>
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Ketik pesan..."
+            className="flex-1 rounded-full bg-gray-100 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button onClick={sendMessage} className="ml-3 rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600">
+            <Send className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </div>
   );
 };
+
 export default Chat;

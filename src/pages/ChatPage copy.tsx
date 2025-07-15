@@ -23,13 +23,6 @@ function ChatPage() {
   useEffect(() => {
     if (!currentUser?.login) {
       navigate("/");
-    }else {
-      // Jika socket belum terhubung, hubungkan
-      if (!socket.connected) {
-        socket.connect();
-      }
-      // Beritahu server bahwa user ini online
-      socket.emit('user_online', currentUser.uid);
     }
 
     if (currentUser && selectedFriend) {
@@ -61,20 +54,13 @@ function ChatPage() {
         </div>
       </div>
       
-      {/* Hapus `isProfileVisible &&` dari sini.
-        Kita tetap butuh `selectedFriend` agar panel tidak render saat tidak ada teman dipilih.
-      */}
-      {selectedFriend && (
-        <div 
-          className={`
-            absolute top-0 right-0 h-full w-full transform transition-transform duration-300 ease-in-out md:w-96 
-            ${isProfileVisible ? 'translate-x-0' : 'translate-x-full'}
-          `}
-        >
-          <InfoEmailProfile 
-            profile={selectedFriend}
-            onClose={() => setIsProfileVisible(false)}
-          />
+      {isProfileVisible && selectedFriend && (
+        <div className={`absolute top-0 right-0 h-full w-full transform transition-transform duration-300 ease-in-out md:w-96 
+          ${isProfileVisible ? 'translate-x-0' : 'translate-x-full'}`}>
+            <InfoEmailProfile 
+                profile={selectedFriend}
+                onClose={() => setIsProfileVisible(false)}
+            />
         </div>
       )}
     </div>
