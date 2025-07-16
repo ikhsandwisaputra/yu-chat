@@ -70,7 +70,7 @@ const Chat = ({ friend, onToggleProfile }: ChatProps) => {
 const [isFriendOnline, setIsFriendOnline] = useState(false); 
   const room = [currentUser?.uid, friend.uid].sort().join('-');
 
-const notificationSound = useRef(new Audio('/notif.mp3'));
+const notificationSound = new Audio(import.meta.env.BASE_URL + 'notif.mp3');;
 const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const [toogle, setToogle] = useState(false);
@@ -150,7 +150,7 @@ const messagesCollection = collection(db, 'chats', room, 'messages');
           const newMessage = change.doc.data() as Message;
           if (newMessage.senderId === friend.uid) {
             // Mainkan suara notifikasi
-            notificationSound.current.play().catch(error => {
+            notificationSound.play().catch(error => {
               // Browser modern mungkin memblokir auto-play, ini untuk menangani error
               console.log("Gagal memutar suara:", error);
             });

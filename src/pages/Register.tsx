@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/pages/Register.tsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { auth, db } from "../firebase";
 import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
 // Impor fungsi getDoc dan serverTimestamp
