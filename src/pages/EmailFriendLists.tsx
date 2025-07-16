@@ -1,6 +1,6 @@
 // src/pages/EmailFriendLists.tsx
 
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Search, ChevronDown, MoreHorizontal, LayoutGrid, List } from 'lucide-react';
 
 import {type RootState} from '../redux/store';

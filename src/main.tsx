@@ -23,7 +23,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <BrowserRouter>
+        <BrowserRouter basename="/yu-chat">
           <Routes>
             {/* Rute tanpa layout */}
             <Route path="/register" element={<Register />} />

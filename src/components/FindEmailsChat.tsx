@@ -1,5 +1,5 @@
 // src/components/FindEmailsChat.tsx
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { ArrowRight, MessageCircleHeart, UserPlus } from 'lucide-react';
 import { collection, query, where, getDocs,  doc, addDoc,
   serverTimestamp,

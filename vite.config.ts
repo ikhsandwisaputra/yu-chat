@@ -5,6 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths"
 import { VitePWA } from 'vite-plugin-pwa';
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/yu-chat",
   plugins: [react(), tailwindcss(), tsconfigPaths(),
     VitePWA({
       registerType: 'autoUpdate',
