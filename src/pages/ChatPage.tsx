@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import socket from '../socket'; // Impor socket
 
+
 function ChatPage() {
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const navigate = useNavigate();
@@ -40,6 +41,9 @@ function ChatPage() {
   }, [currentUser, selectedFriend, navigate]);
 
   return (
+    <>
+    
+    
     <div className="flex h-screen w-full overflow-hidden bg-gray-100 font-sans">
       <Sidebar />
       <div className="flex flex-1 lg:static">
@@ -78,6 +82,7 @@ function ChatPage() {
         </div>
       )}
     </div>
+    </>
   );
 }
 

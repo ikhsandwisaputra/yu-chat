@@ -10,7 +10,7 @@ import { db } from '@/firebase';
 import Loaders from '@/components/Loaders';
 // Tipe data untuk setiap orang
 import { useDispatch } from "react-redux";
-import { setSelectedFriend, clearSelectedFriend } from "@/redux/slices/userSlice";
+import { setSelectedFriend } from "@/redux/slices/userSlice";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -53,7 +53,7 @@ const PersonCard = ({ person, onClick }: { person: Users, onClick: () => void })
 // Komponen Utama
 const EmailFriendLists = () => {
     const currentUser = useSelector((state: RootState) => state.user.selectedUser);
-     const currentFriends = useSelector((state: RootState) => state.user.selectedFriend);
+    //  const currentFriends = useSelector((state: RootState) => state.user.selectedFriend);
 
     const curentIdUser = currentUser?.uid;
     const [peopleData, setPeopleData] = useState<Users[]>([]);
@@ -73,9 +73,9 @@ const EmailFriendLists = () => {
     console.error(error);
   }
 };
-const handleDeleteFriends = () => {
-    dispatch(clearSelectedFriend())
-}
+// const handleDeleteFriends = () => {
+//     dispatch(clearSelectedFriend())
+// }
 
 useEffect(() => {
   const fetchFriends = async () => {
@@ -131,9 +131,8 @@ useEffect(() => {
 
   return (
       <div className="flex h-screen w-full overflow-hidden important bg-gray-100 font-sans">
-   <h1>{currentFriends?.name}</h1>
-  <h1>{currentFriends?.email}</h1>
-  <button  onClick={handleDeleteFriends}>delete friends</button>
+   
+  {/* <button  onClick={handleDeleteFriends}>delete friends</button> */}
         <Sidebar />
       <div className="mx-auto lg:static w-[80%]">
         {/* Header dan Judul */}

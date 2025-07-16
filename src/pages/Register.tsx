@@ -99,9 +99,7 @@ const Register = () => {
   return (
     // Latar belakang utama dengan warna custom dan posisi relative untuk blob
     <>
-    {loading && (
-      <Loaders></Loaders>
-    )}
+   
     
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#ebe3f8] p-5 font-sans">
       <div className="absolute -translate-x-1/3 -translate-y-1/4 inset-0 m-auto h-86 w-86   rounded-full bg-gradient-to-br from-[#9c7ad5] to-[#8e4cff]  mix-blend-multiply filter blur-3xl"></div>
@@ -152,6 +150,11 @@ const Register = () => {
         {/* Kolom Kanan: Form Registrasi / Login */}
         {toogle ? (
         <div className="w-full bg-white rounded-2xl p-6 lg:w-1/2 m-4 flex items-center justify-center flex-col">
+           {loading ? (
+      <Loaders></Loaders>
+    ) : (
+<>
+
           <h2 className="text-2xl font-bold text-gray-800">Buat akun baru</h2>
           <p className="mt-2 text-sm text-gray-700">
             Sudah punya akun?{' '}
@@ -159,6 +162,8 @@ const Register = () => {
               Masuk di sini
             </a>
           </p>          
+          </>
+    )}
           
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-4">
           

@@ -20,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
     {/* <Provider> */}
      <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
+        
       <BrowserRouter >
       <Routes>
       <Route path="/" element={<Register />} />
