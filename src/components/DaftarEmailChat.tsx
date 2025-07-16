@@ -53,7 +53,7 @@ const ChatItem = ({ friend, currentUser, onSelect, isOnline }: { friend: Users, 
   return (
     <div
       onClick={() => onSelect(friend)}
-      className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-[#0000001e] cursor-pointer rounded-lg"
+      className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-[#0000001e] cursor-pointer  border-b-[#0000002d] border-b"
     >
       <div className="relative">
         <img src={friend.photoURL || `https-ui-avatars.com/api/?name=${friend.name}`} alt={friend.name} className="w-12 h-12 rounded-full mr-4" />
@@ -155,7 +155,7 @@ const DaftarEmailChat = () => {
   }
 
   return (
-    <div className="flex h-full flex-col border-r bg-white">
+    <div className="flex w-full h-full flex-col  bg-white">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <h2 className="text-2xl font-bold">Chats</h2>
@@ -184,7 +184,6 @@ const DaftarEmailChat = () => {
         ) : (
           friends.length > 0 ? (
            <div className="p-2 space-y-1">
-      <h2 className="text-xl font-bold p-3 text-gray-800 dark:text-white">Chats</h2>
       {friends.map((friend) => (
       <ChatItem 
           key={friend.uid}
@@ -198,7 +197,7 @@ const DaftarEmailChat = () => {
     </div>
           ) : (
             <div className="flex items-center justify-center p-4">
-                <NavLink to={'/find-emails-chat'} className="group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-rose-300 hover:before:[box-shadow:_20px_20px_20px_30px_#a21caf] duration-500 before:duration-500 hover:duration-500 underline underline-offset-2 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur hover:underline hover:underline-offset-4 origin-left hover:decoration-2 hover:text-rose-300 relative bg-neutral-800 h-16 w-64 border text-left p-3 text-gray-50 text-base font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-violet-500 before:rounded-full before:blur-lg after:absolute after:z-10 after:w-20 after:h-20 after:content[''] after:bg-rose-300 after:right-8 after:top-3 after:rounded-full after:blur-lg">
+                <NavLink to={'/find-emails-chat'} className="group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:ose-300 hover:before:[box-shadow:_20px_20px_20px_30px_#a21caf] duration-500 before:duration-500 hover:duration-500 underline underline-offset-2 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur hover:underline hover:underline-offset-4 origin-left hover:decoration-2 hover:text-rose-300 relative bg-neutral-800 h-16 w-64 border text-left p-3 text-gray-50 text-base font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-violet-500 before:rounded-full before:blur-lg after:absolute after:z-10 after:w-20 after:h-20 after:content[''] after:bg-rose-300 after:right-8 after:top-3 after:rounded-full after:blur-lg">
      Find Friends ..
     </NavLink>
              

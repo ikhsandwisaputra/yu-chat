@@ -44,7 +44,7 @@ function ChatPage() {
     <>
     
     
-    <div className="flex h-screen w-full overflow-hidden bg-gray-100 font-sans">
+    <div className="flex h-screen w-full overflow-hidden bg-[#bedfff] font-sans p-[25px]  ">
       <Sidebar />
       <div className="flex flex-1 lg:static">
         <div className={`w-full transition-transform duration-300 ease-in-out lg:w-96 ${selectedFriend && 'hidden lg:flex'}`}>
