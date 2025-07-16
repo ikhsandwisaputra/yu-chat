@@ -31,7 +31,7 @@ const InfoEmailProfile = ({ profile, onClose }: InfoEmailProfileProps) => {
 
 
   return (
-    <div className="flex h-screen flex-col border-l bg-white shadow-lg">
+    <div className="flex  my-6 flex-col bg-white shadow-lg">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <h2 className="text-xl font-bold">Detail Kontak</h2>
@@ -41,7 +41,7 @@ const InfoEmailProfile = ({ profile, onClose }: InfoEmailProfileProps) => {
       </div>
 
       {/* Konten Profil Utama */}
-      <div className="flex flex-col items-center border-b p-6">
+      <div className="flex flex-col items-center  p-6">
         {profile.photoURL ? (
           <img 
             src={profile.photoURL} 
@@ -94,7 +94,7 @@ const InfoEmailProfile = ({ profile, onClose }: InfoEmailProfileProps) => {
       </div>
 
       {/* Tombol Aksi (Opsional) */}
-      <div className="p-4 border-t">
+      <div className="p-4 ">
         <button className="w-full rounded-lg bg-red-500 px-4 py-2 font-semibold text-white hover:bg-red-600">
           Hapus Teman
         </button>

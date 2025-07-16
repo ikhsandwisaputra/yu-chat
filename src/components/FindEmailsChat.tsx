@@ -126,7 +126,7 @@ const handleSendFriendRequest = async (friendUID: string) => {
 };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#d6d4e1] p-4 font-sans">
+    <div className="flex h-full flex-col items-center justify-center bg-[#61acf38c] p-4 font-sans">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br to-[#9b51fc] shadow-lg">
         <MessageCircleHeart className="h-8 w-8 text-white" />
       </div>

@@ -19,7 +19,7 @@ import type { RootState } from '../redux/store'; // Ambil RootState dari store R
  // Ambil RootState dari store Redux Anda
 import { toast } from 'react-toastify';
 import { UserMinus, UserPlus } from 'lucide-react';
-import Sidebar from '../components/Sidebar'; // Impor Sidebar secara langsung
+
 
 
 // Interface yang sama seperti sebelumnya
@@ -121,12 +121,11 @@ const FriendRequests = () => {
 
   // Gunakan struktur layout yang sama dengan halaman lain
   return (
-    <div className="flex h-screen bg-slate-900 text-white">
-      <Sidebar />
+   
       <div className="flex flex-col flex-grow">
         
         <div className="p-4 md:p-6 overflow-y-auto">
-          <h1 className="text-2xl font-bold mb-6 text-slate-200">
+          <h1 className="text-2xl font-bold mb-6 text-slate-800">
             Permintaan Pertemanan
           </h1>
           {loading ? (
@@ -175,13 +174,13 @@ const FriendRequests = () => {
               ))}
             </ul>
           ) : (
-            <p className="text-center p-10 text-slate-400">
+            <p className="text-center p-10 text-slate-800">
               Tidak ada permintaan pertemanan saat ini.
             </p>
           )}
         </div>
       </div>
-    </div>
+    
   );
 };
 

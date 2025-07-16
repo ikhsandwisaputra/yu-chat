@@ -36,40 +36,37 @@ function ChatPage() {
   }, [currentUser, selectedFriend, navigate]);
 
   // Hapus div pembungkus utama di sini
-  return (
-    <div className="flex w-full relative lg:static h-full overflow-hidden  rounded-2xl"> {/* Ubah div ini */}
-      <div className={`w-full transition-transform duration-300 ease-in-out lg:w-96 ${selectedFriend && 'hidden lg:flex'}`}>
-        <DaftarEmailChat />
-      </div>
-      
-      <div className={`w-full flex-1 transition-transform duration-300 ease-in-out ${!selectedFriend && 'hidden lg:flex'}`}>
-        {selectedFriend ? (
-          <Chat 
-            friend={selectedFriend} 
-            onToggleProfile={handleToggleProfile}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-500 bg-white rounded-lg">
-            Pilih teman untuk memulai percakapan
-          </div>
-        )}
-      </div>
-      
-      {selectedFriend && (
-        <div 
-          className={`
-           absolute w-full transform transition-transform duration-300 right-0 rounded-l-2xl h-full top-0 ease-in-out md:w-96  z-[999999999]
-            ${isProfileVisible ? 'translate-x-0' : 'translate-x-full'}
-          `}
-        >
-          <InfoEmailProfile 
-            profile={selectedFriend}
-            onClose={() => setIsProfileVisible(false)}
-          />
+return (
+  <div className="relative flex h-screen w-full overflow-hidden bg-[#f1f5f9]">
+    {/* Sidebar daftar chat */}
+    <div className={`z-10 h-full w-full max-w-xs border-r bg-white lg:flex ${selectedFriend ? 'hidden' : 'flex'}`}>
+      <DaftarEmailChat />
+    </div>
+
+    {/* Chat box */}
+    <div className={`relative flex h-full flex-1 flex-col bg-white ${!selectedFriend ? 'hidden lg:flex' : 'flex'}`}>
+      {selectedFriend ? (
+        <Chat friend={selectedFriend} onToggleProfile={handleToggleProfile} />
+      ) : (
+        <div className="flex h-full items-center justify-center text-gray-500">
+          Pilih teman untuk memulai percakapan
         </div>
       )}
     </div>
-  );
+
+    {/* Info profil */}
+    {selectedFriend && (
+      <div
+        className={`
+          absolute right-0 top-0 z-20 h-full w-full max-w-sm transform bg-white shadow-lg transition-transform duration-300 ease-in-out
+          ${isProfileVisible ? 'translate-x-0' : 'translate-x-full'}
+        `}
+      >
+        <InfoEmailProfile profile={selectedFriend} onClose={() => setIsProfileVisible(false)} />
+      </div>
+    )}
+  </div>
+);
 }
 
 export default ChatPage;

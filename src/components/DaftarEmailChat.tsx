@@ -1,7 +1,7 @@
 // src/components/DaftarEmailChat.tsx
 
-import React, { useEffect, useState } from 'react';
-import { Search, Settings, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Search } from 'lucide-react';
 import { collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,6 +11,7 @@ import Loaders from './Loaders';
 import socket from '@/socket';
 import { NavLink} from 'react-router-dom';
 import MessageStatus from './MessageStatus';
+
 interface Users {
   uid: string;
   email: string;
@@ -56,7 +57,7 @@ const ChatItem = ({ friend, currentUser, onSelect, isOnline }: { friend: Users, 
       className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-[#0000001e] cursor-pointer  border-b-[#0000002d] border-b"
     >
       <div className="relative">
-        <img src={friend.photoURL || `https-ui-avatars.com/api/?name=${friend.name}`} alt={friend.name} className="w-12 h-12 rounded-full mr-4" />
+        <img src={friend.photoURL || `https-ui-avatars.com/api/?name=${friend.name}`} alt={friend.name} className="w-12 h-12 rounded-full mr-4" referrerPolicy='no-referrer' />
         {/* Indikator Online */}
         {isOnline && (
           <span className="absolute bottom-0 right-4 block h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
@@ -158,11 +159,7 @@ const DaftarEmailChat = () => {
     <div className="flex w-full h-full flex-col  bg-white">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
-        <h2 className="text-2xl font-bold">Chats</h2>
-        <div className="flex space-x-3">
-          <button className="text-gray-500 hover:text-gray-700"><Settings className="h-5 w-5" /></button>
-          <button className="text-gray-500 hover:text-gray-700"><Plus className="h-5 w-5" /></button>
-        </div>
+        <h2 className="text-2xl font-bold">Chats</h2>    
       </div>
 
       {/* Search Bar */}

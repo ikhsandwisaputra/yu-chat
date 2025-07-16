@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Search, ChevronDown, MoreHorizontal, LayoutGrid, List } from 'lucide-react';
-import Sidebar from '@/components/Sidebar';
+
 import {type RootState} from '../redux/store';
 import {useSelector} from 'react-redux';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
@@ -130,13 +130,10 @@ useEffect(() => {
     
 
   return (
-      <div className="flex h-screen w-full overflow-hidden important bg-gray-100 font-sans">
-   
-  {/* <button  onClick={handleDeleteFriends}>delete friends</button> */}
-        <Sidebar />
-      <div className="mx-auto lg:static w-[80%]">
+     
+      <div className="mx-auto lg:static w-full p-4">
         {/* Header dan Judul */}
-        <h1 className="text-4xl font-bold text-gray-900">People</h1>
+        <h1 className="text-4xl font-bold text-gray-900">Daftar Teman</h1>
 
         {/* Tabs dan Search Bar */}
         <div className="mt-6 flex flex-col items-baseline justify-between md:flex-row">
@@ -173,7 +170,7 @@ useEffect(() => {
 
 {/* RENCANA NYA SAAT CARD PROFIL DIKLIK MAKA AKAN PINDAH KE HALAMAN CHATPAGE DENGAN MENAMPILKAN HASIL DARI TEMAN YANG DI PILIH/KLIK  */}
         {/* Grid Kartu Profil */}
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 cursor-pointer">
           {loading ? (
             <Loaders />
           ) : (
@@ -181,7 +178,7 @@ useEffect(() => {
           )}
         </div>
       </div>
-    </div>
+  
   );
 };
 

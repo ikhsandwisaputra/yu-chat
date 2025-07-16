@@ -20,7 +20,7 @@ import {
 } from 'firebase/firestore';
 import {db} from '@/firebase'
 import SendButton from './Button';
-import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
+
 
 interface Friend {
   uid: string;
@@ -73,11 +73,7 @@ const [isFriendOnline, setIsFriendOnline] = useState(false);
 const notificationSound = useRef(new Audio('/notif.mp3'));
 const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-const [toogle, setToogle] = useState(false);
 
-const handleToogle = () => {
-  setToogle(!toogle);
-}
 useEffect(() => {
     const handleFriendTyping = () => setIsTyping(true);
     const handleFriendStoppedTyping = () => setIsTyping(false);
@@ -248,46 +244,39 @@ const sendMessage = async () => {
   };
 
   return (
-   <div className="flex w-full h-full flex-col -100 shadow-lg rounded-2xl">
+   <div className="flex w-full  flex-col  bg-white shadow-lg">
+    {/* Header Chat */}
+        <div className="flex items-center justify-between border-b border-b-[#00000042] p-4 lg:block fixed bg-white">
+        <div onClick={onToggleProfile} className="flex items-center cursor-pointer">
+        <button onClick={(e) => { e.stopPropagation(); handleBack(); }} className="mr-4 lg:hidden">
+        <ArrowLeft className="h-6 w-6 text-gray-600" />
+        </button>
+        {friend.photoURL ? (
+        <img src={friend.photoURL} alt={friend.name} className="h-10 w-10 rounded-full object-cover" referrerPolicy="no-referrer" />
+        ) : (
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-400">
+        {friend.name.charAt(0)}
+        </div>
+        )}
+        <div className="ml-4">
+        <h2 className="text-lg font-semibold">{friend.name}</h2>
+        {isTyping ? (
+        <p className="text-sm text-green-500 animate-pulse">typing...</p>
+        ) : (
+        <p className={`text-sm ${isFriendOnline ? 'text-green-500' : 'text-gray-500'}`}>{isFriendOnline ? 'Online •' : 'Offline •'}</p>
+        )}
+        </div>
+        </div>
+        <div className="flex items-center space-x-4">
+        <button className="text-gray-600 hover:text-blue-500"><Maximize2 className="h-5 w-5" /></button>
+        <button className="text-gray-600 hover:text-blue-500"><Phone className="h-5 w-5" /></button>
+        <button className="text-gray-600 hover:text-blue-500"><Video className="h-5 w-5" /></button>
+        <button onClick={onToggleProfile} className="text-gray-600 hover:text-blue-500"><Info className="h-5 w-5" /></button>
+        </div>
+        </div>
 
-     
-       {/* Header Chat */}
-              <div className="flex items-center justify-between border-b border-b-[#00000042] w-full p-1 lg:p-4 lg:relative fixed bg-[#6583f3] z-[99] pb-[40px] lg:rounded-tr-2xl">
-              <div onClick={onToggleProfile} className="flex items-center cursor-pointer">
-              <button onClick={(e) => { e.stopPropagation(); handleBack(); }} className="mr-4 lg:hidden">
-              <ArrowLeft className="h-6 w-6 text-white cursor-pointer" />
-              </button>
-              {friend.photoURL ? (
-              <img src={friend.photoURL} alt={friend.name} className="h-10 w-10 rounded-full object-cover" referrerPolicy="no-referrer" />
-              ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-white">
-              {friend.name.charAt(0)}
-              </div>
-              )}
-              <div className="ml-4">
-              <h2 className="text-lg text-white font-semibold">{friend.name}</h2>
-              {isTyping ? (
-              <p className="text-sm text-green-500 bg-gray-100 rounded w-fit p-1 animate-pulse">typing...</p>
-              ) : (
-              <p className={`text-sm font-bold ${isFriendOnline ? 'text-white bg-green-700 rounded w-fit p-1' : 'text-white bg-gray-500 700 rounded w-fit p-1'}`}>{isFriendOnline ? 'Online •' : 'Offline •'}</p>
-              )}
-              </div>
-              </div>
-              {/* toogle */}
-              <PiDotsThreeOutlineVerticalFill size={20} onClick={handleToogle} className='cursor-pointer text-white' />
-              {toogle && 
-              <div className="flex absolute bg-white -bottom-13 rounded p-4 right-0 items-center space-x-4">
-              <button className="text-gray-600 hover:text-blue-500"><Maximize2 className="h-5 w-5" /></button>
-              <button className="text-gray-600 hover:text-blue-500"><Phone className="h-5 w-5" /></button>
-              <button className="text-gray-600 hover:text-blue-500"><Video className="h-5 w-5" /></button>
-              <button onClick={onToggleProfile} className="text-gray-600 hover:text-blue-500"><Info className="h-5 w-5" /></button>
-              </div>              
-              }
-              </div>
-   
-      
         {/* Area Pesan */}
-<div className="flex-1 overflow-y-auto p-4 space-y-4 relative z-[999] bg-white mt-[80px] rounded-t-4xl">
+<div className="flex-1 overflow-y-auto p-4 space-y-4">
 {messages.length === 0 ? (
   <div className="flex justify-center items-center h-full">
     <p className="text-center text-gray-500">Belum ada chat apapun</p>
@@ -295,7 +284,7 @@ const sendMessage = async () => {
 ) : (
   messages.map((msg, index) => (
     <div key={index} className={`flex ${msg.senderId === currentUser?.uid ? 'justify-end' : 'justify-start'}`}>
-      <div className={`max-w-xs md:max-w-md lg:max-w-lg rounded-full px-7 py-1 ${msg.senderId === currentUser?.uid ? 'bg-[#c6e8f7] text-slate-800 rounded-br-2xl ' : 'bg-[#0000001c] text-gray-800 rounded-bl-2xl '}`}>
+      <div className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg p-3 ${msg.senderId === currentUser?.uid ? 'bg-[#c6e8f7] text-slate-800' : 'bg-[#0000001c] text-gray-800'}`}>
         <p>{msg.message}</p>
        <span className="text-xs opacity-75">{new Date(msg.timestamp).toLocaleTimeString()}</span>
         <MessageStatus
@@ -308,13 +297,11 @@ const sendMessage = async () => {
 )}
 <div ref={messagesEndRef} />
 </div>
-      
-      <div className='w-full'>
-       {/* Input Pesan */}
-<div className="border-t border-t-[#0000002f] p-4">
+{/* Input Pesan */}
+<div className="border-t border-t-[#0000002f] p-4 w-[100px]">
 <div className="flex items-center">
-<button className="text-gray-500 hover:text-blue-500 mr-3"><Image className="lg:h-6 lg:w-6 h-5 w-5" /></button>
-<button className="text-gray-500 hover:text-blue-500 mr-3"><Smile className="lg:h-6 lg:w-6 h-5 w-5" /></button>
+<button className="text-gray-500 hover:text-blue-500 mr-3"><Image className="h-6 w-6" /></button>
+<button className="text-gray-500 hover:text-blue-500 mr-3"><Smile className="h-6 w-6" /></button>
 <input
 type="text"
 value={message}
@@ -322,7 +309,7 @@ value={message}
 onChange={handleTyping}
 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
 placeholder="Ketik pesan..."
-className="flex-1 rounded-full bg-gray-100  w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+className="flex-1 rounded-full bg-gray-100 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 />
 
 <div onClick={sendMessage}>
@@ -331,7 +318,6 @@ className="flex-1 rounded-full bg-gray-100  w-full px-4 py-2 focus:outline-none 
 
 </div>
 </div>
-      </div>
 </div>
    
   );

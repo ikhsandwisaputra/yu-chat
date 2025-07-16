@@ -102,8 +102,8 @@ const Register = () => {
    
     
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#ebe3f8] p-5 font-sans">
-      <div className="absolute -translate-x-1/3 -translate-y-1/4 inset-0 m-auto h-86 w-86   rounded-full bg-gradient-to-br from-[#9c7ad5] to-[#8e4cff]  mix-blend-multiply filter blur-3xl"></div>
-      <div className="absolute -translate-x-[60%] inset-0 m-auto h-86 w-86 rounded-full bg-gradient-to-b from-[#0178ff] via-[#00ff40a8] to-[#00ff80] mix-blend-multiply filter blur-3xl "></div>
+      <div className="absolute -translate-x-1/3 -translate-y-1/4 inset-0 m-auto h-86 w-86   rounded-full bg-gradient-to-br from-[#9c7ad5] to-[#8e4cff]  mix-blend-multiply filter blur-3xl animate-pulse"></div>
+      <div className="absolute -translate-x-[60%] inset-0 m-auto h-86 w-86 rounded-full bg-gradient-to-b from-[#0178ff] via-[#00ff40a8] to-[#00ff80] mix-blend-multiply filter blur-3xl animate-pulse animate-delay-400"></div>
       
       {/* Kartu Kaca (Glassmorphism) */}
       <div className="z-10 flex w-full max-w-4xl overflow-hidden rounded-2xl border border-white/20 bg-white/20 shadow-2xl backdrop-blur-lg">
@@ -123,8 +123,8 @@ const Register = () => {
                 <HiChatAlt2  className="h-6 w-6 text-[white]" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">Pesan Real-Time</h3>
-                <p className="mt-1 text-sm text-white">
+                <h3 className="font-semibold text-[#322c86]">Pesan Real-Time</h3>
+                <p className="mt-1 text-sm text-[#322c86]">
                   Terhubung secara instan dengan teman dan keluarga tanpa jeda.
                 </p>
               </div>
@@ -134,15 +134,15 @@ const Register = () => {
                 <HiShieldCheck className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">Aman & Pribadi</h3>
-                <p className="mt-1 text-sm text-white">
+                <h3 className="font-semibold text-[#322c86]">Aman & Pribadi</h3>
+                <p className="mt-1 text-sm text-[#322c86]">
                   Privasimu adalah prioritas kami. Semua percakapan terenkripsi.
                 </p>
               </div>
             </div>
           </div>
 
-          <p className="z-10 text-xs text-slate-600/70">
+          <p className="z-10 text-xs text-slate-600/70 mt-5">
             &copy; {new Date().getFullYear()} Yu Chat. All Rights Reserved.
           </p>
         </div>
@@ -177,7 +177,7 @@ const Register = () => {
             </button>
               <button
               type="button"
-               onClick={() => handleOAuthRegister(new GithubAuthProvider())}
+               disabled 
               className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300/70 bg-white/70 px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-black/10 cursor-pointer"
             >
               <FaGithub className="h-5 w-5" />
@@ -208,7 +208,7 @@ const Register = () => {
             </button>
             <button
               type="button"
-              onClick={() => handleOAuthRegister(new GithubAuthProvider())}
+              disabled            
               className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300/70 bg-white/70 px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-black/10 cursor-pointer"
             >
               <FaGithub className="h-5 w-5" />
