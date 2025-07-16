@@ -5,7 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths"
 import { VitePWA } from 'vite-plugin-pwa';
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/yu-chat",
+  base: "/yu-chat/",
   plugins: [react(), tailwindcss(), tsconfigPaths(),
     VitePWA({
       registerType: 'autoUpdate',
@@ -18,6 +18,7 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/yu-chat/',
+        scope: '/yu-chat/', // ✅ WAJIB untuk GitHub Pages!
         icons: [
           {
             src: 'icons/icon-192x192.png',

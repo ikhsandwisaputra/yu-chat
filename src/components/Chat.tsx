@@ -1,7 +1,7 @@
 // src/components/Chat.tsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Maximize2, Phone, Video, Info, Image, Smile, ArrowLeft } from 'lucide-react';
+import { Maximize2, Phone, Video, Info,  Smile, ArrowLeft, Bell } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import socket from '../socket';
@@ -70,10 +70,26 @@ const Chat = ({ friend, onToggleProfile }: ChatProps) => {
 const [isFriendOnline, setIsFriendOnline] = useState(false); 
   const room = [currentUser?.uid, friend.uid].sort().join('-');
 
-const notificationSound = new Audio(import.meta.env.BASE_URL + 'notif.mp3');;
+let notificationSound = new Audio(import.meta.env.BASE_URL + 'notif.mp3');;
 const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const [toogle, setToogle] = useState(false);
+
+
+const setupAudio = () => {
+  if (!notificationSound) {
+    notificationSound = new Audio(import.meta.env.BASE_URL + 'notif.mp3');
+  }
+
+  // Paksa play dan pause untuk "izin mainkan"
+  notificationSound.play().then(() => {
+    notificationSound?.pause();
+    notificationSound.currentTime = 0;
+    console.log("Audio siap digunakan");
+  }).catch((e) => {
+    console.warn("Audio belum bisa dimainkan", e);
+  });
+};
 
 const handleToogle = () => {
   setToogle(!toogle);
@@ -183,7 +199,7 @@ const messagesCollection = collection(db, 'chats', room, 'messages');
     unsubscribe(); // Hentikan listener Firestore
     socket.emit('leave_room', room); // Tinggalkan room socket
   };
-}, [room, currentUser?.uid, friend.uid]);
+}, [room, currentUser?.uid, friend.uid, notificationSound]);
 
   useEffect(() => {
     // Scroll ke bawah saat ada pesan baru
@@ -252,7 +268,7 @@ const sendMessage = async () => {
 
      
        {/* Header Chat */}
-              <div className="flex items-center justify-between border-b border-b-[#00000042] w-full p-1 lg:p-4 lg:relative fixed bg-[#6583f3] z-[99] pb-[40px] lg:rounded-tr-2xl">
+              <div className="flex items-center justify-between border-b border-b-[#00000042] w-full p-4 lg:relative fixed bg-[#6583f3] z-[99]  lg:rounded-tr-2xl">
               <div onClick={onToggleProfile} className="flex items-center cursor-pointer">
               <button onClick={(e) => { e.stopPropagation(); handleBack(); }} className="mr-4 lg:hidden">
               <ArrowLeft className="h-6 w-6 text-white cursor-pointer" />
@@ -287,7 +303,7 @@ const sendMessage = async () => {
    
       
         {/* Area Pesan */}
-<div className="flex-1 overflow-y-auto p-4 space-y-4 relative z-[999] bg-white mt-[80px] rounded-t-4xl">
+<div className="flex-1 overflow-y-auto p-4 space-y-4  bg-white mt-[80px] rounded-t-4xl">
 {messages.length === 0 ? (
   <div className="flex justify-center items-center h-full">
     <p className="text-center text-gray-500">Belum ada chat apapun</p>
@@ -313,7 +329,7 @@ const sendMessage = async () => {
        {/* Input Pesan */}
 <div className="border-t border-t-[#0000002f] p-4">
 <div className="flex items-center">
-<button className="text-gray-500 hover:text-blue-500 mr-3"><Image className="lg:h-6 lg:w-6 h-5 w-5" /></button>
+<button onClick={setupAudio}><Bell className="lg:h-6 lg:w-6 h-5 w-5 text-gray-500 hover:text-blue-500 mr-3"></Bell></button>
 <button className="text-gray-500 hover:text-blue-500 mr-3"><Smile className="lg:h-6 lg:w-6 h-5 w-5" /></button>
 <input
 type="text"
